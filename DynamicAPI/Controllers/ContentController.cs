@@ -5,6 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using DynamicAPI.Model;
+using System.Collections.Generic;
 
 namespace DynamicAPI.Controllers {
 
@@ -15,9 +16,20 @@ namespace DynamicAPI.Controllers {
         [HttpPost]
         public IActionResult PostContent(RequisicaoDataModel _requisicao) {
 
-            RequisicaoModel data = new RequisicaoModel();
+            dynamic json = JsonConvert.SerializeObject(_requisicao.Conteudo);
+            dynamic conteudo = JsonConvert.DeserializeObject<ExpandoObject>(json);
 
-            data.ConteudoEntrada = _requisicao.Conteudo;
+            List<dynamic> retorno = new List<dynamic>();
+
+            if (conteudo.Nome != null)
+            {
+                retorno.Add(conteudo.Nome);
+            }
+
+            if ( conteudo.Id)
+            {
+                retorno.Add(conteudo.Id);
+            }
 
             /*foreach (var item in conteudo)
             {
@@ -50,7 +62,7 @@ namespace DynamicAPI.Controllers {
                 }
             }*/
 
-            return Ok(_requisicao);
+            return Ok(retorno);
 
         }
 
